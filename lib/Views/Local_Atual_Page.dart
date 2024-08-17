@@ -1,7 +1,9 @@
+// lib/Views/localizacao_atual_page.dart
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
-import 'teste.dart';
+import '../Controllers/Local_Atual_Controller.dart';
+import '../Models/Trip_Model.dart';
+import '../Controllers/AppDrawer.dart';
 
 class LocalizacaoAtualPage extends StatefulWidget {
   @override
@@ -9,36 +11,14 @@ class LocalizacaoAtualPage extends StatefulWidget {
 }
 
 class _LocalizacaoAtualPageState extends State<LocalizacaoAtualPage> {
-  GoogleMapController? _mapController;
-  Location _location = Location();
-  Marker? _vehicleMarker;
-  bool _isTripActive = true;  // Mocked value, you should replace this with actual logic
-  bool _isUserConfirmed = true;  // Mocked value, you should replace this with actual logic
+  late TripController _tripController;
 
   @override
   void initState() {
     super.initState();
-    _location.onLocationChanged.listen((LocationData currentLocation) {
-      if (_isTripActive && _isUserConfirmed) {
-        _updateVehicleLocation(
-          LatLng(currentLocation.latitude!, currentLocation.longitude!),
-        );
-      }
-    });
-  }
-
-  void _updateVehicleLocation(LatLng vehiclePosition) {
-    setState(() {
-      _vehicleMarker = Marker(
-        markerId: MarkerId('vehicle_marker'),
-        position: vehiclePosition,
-        infoWindow: InfoWindow(title: "Veículo Atual"),
-      );
-    });
-
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLng(vehiclePosition),
-    );
+    TripModel tripModel = TripModel(isTripActive: true, isUserConfirmed: true);
+    _tripController = TripController(tripModel: tripModel);
+    _tripController.init();
   }
 
   @override
@@ -48,19 +28,20 @@ class _LocalizacaoAtualPageState extends State<LocalizacaoAtualPage> {
         title: Text('Localização Atual'),
       ),
       drawer: AppDrawer(),
-      body: _isTripActive && _isUserConfirmed
+      body: _tripController.tripModel.isTripActive &&
+              _tripController.tripModel.isUserConfirmed
           ? Column(
               children: [
                 Expanded(
                   child: GoogleMap(
                     onMapCreated: (controller) {
-                      _mapController = controller;
+                      _tripController.mapController = controller;
                     },
                     initialCameraPosition: CameraPosition(
                       target: LatLng(-15.7942, -47.8822), // Coordenadas iniciais (exemplo)
                       zoom: 14,
                     ),
-                    markers: _vehicleMarker != null ? {_vehicleMarker!} : {},
+                    markers: _tripController.getVehicleMarker(),
                   ),
                 ),
                 Padding(

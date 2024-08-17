@@ -1,7 +1,11 @@
+// lib/Views/viagens_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:testergr/rotaViagem.dart';
-import 'teste.dart';
+import '../Controllers/viagem_controller.dart';
+import '../Models/Viagem_Model.dart';
+import '../Controllers/AppDrawer.dart';
+import 'rotaViagem.dart';
 
 class ViagensPage extends StatefulWidget {
   @override
@@ -9,29 +13,7 @@ class ViagensPage extends StatefulWidget {
 }
 
 class _ViagensPageState extends State<ViagensPage> {
-  // Mock data for example purposes
-  List<Viagem> viagens = [
-    Viagem(
-        periodo: '12:00 - 13:00',
-        cidadeOrigem: 'Cidade A',
-        cidadeDestino: 'Cidade B',
-        tempoAcao: '1h',
-        status: StatusViagem.emAberto),
-    Viagem(
-        periodo: '14:00 - 15:30',
-        cidadeOrigem: 'Cidade C',
-        cidadeDestino: 'Cidade D',
-        tempoAcao: '1h 30m',
-        status: StatusViagem.emAndamento),
-    Viagem(
-        periodo: '10:00 - 11:00',
-        cidadeOrigem: 'Cidade E',
-        cidadeDestino: 'Cidade F',
-        tempoAcao: '1h',
-        status: StatusViagem.terminada),
-  ];
-
-  Viagem? selectedViagem;
+  final ViagemController _viagemController = ViagemController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +23,13 @@ class _ViagensPageState extends State<ViagensPage> {
       ),
       drawer: AppDrawer(),
       body: ListView.builder(
-        itemCount: viagens.length,
+        itemCount: _viagemController.viagens.length,
         itemBuilder: (context, index) {
-          final viagem = viagens[index];
+          final viagem = _viagemController.viagens[index];
           return GestureDetector(
             onTap: () {
               setState(() {
-                selectedViagem = viagem;
+                _viagemController.selectViagem(viagem);
               });
             },
             child: Card(
@@ -71,7 +53,9 @@ class _ViagensPageState extends State<ViagensPage> {
           );
         },
       ),
-      bottomNavigationBar: selectedViagem != null ? _buildBottomActionButtons() : SizedBox(),
+      bottomNavigationBar: _viagemController.selectedViagem != null
+          ? _buildBottomActionButtons()
+          : SizedBox(),
     );
   }
 
@@ -83,21 +67,19 @@ class _ViagensPageState extends State<ViagensPage> {
         children: [
           ElevatedButton(
             onPressed: () {
-              _showViagemDetails(selectedViagem!);
+              _showViagemDetails(_viagemController.selectedViagem!);
             },
             child: Text('Detalhes'),
           ),
           ElevatedButton(
             onPressed: () {
               setState(() {
-                if (selectedViagem!.presencaConfirmada) {
-                  selectedViagem!.presencaConfirmada = false;
-                } else {
-                  selectedViagem!.presencaConfirmada = true;
-                }
+                _viagemController.togglePresencaConfirmada();
               });
             },
-            child: Text(selectedViagem!.presencaConfirmada ? 'Retirar Presença' : 'Confirmar Presença'),
+            child: Text(_viagemController.selectedViagem!.presencaConfirmada
+                ? 'Retirar Presença'
+                : 'Confirmar Presença'),
           ),
         ],
       ),
@@ -125,14 +107,13 @@ class _ViagensPageState extends State<ViagensPage> {
               Text('Destino: ${viagem.cidadeDestino}'),
               Text('Tempo de Ação: ${viagem.tempoAcao}'),
               SizedBox(height: 16),
-              // Placeholder for map and vehicle details
               Container(
                 height: 200,
                 color: Colors.blueGrey[100],
                 child: ViagemDetailsMap(
-                origem: LatLng(-23.550520, -46.633308), // Exemplo de coordenadas
-                destino: LatLng(-22.908333, -43.196388),
-              ),
+                  origem: LatLng(-23.550520, -46.633308), // Exemplo de coordenadas
+                  destino: LatLng(-22.908333, -43.196388),
+                ),
               ),
               SizedBox(height: 16),
               Row(
@@ -149,40 +130,4 @@ class _ViagensPageState extends State<ViagensPage> {
       },
     );
   }
-}
-
-// Mock enum for travel status
-enum StatusViagem { emAberto, emAndamento, terminada }
-
-extension StatusViagemExtension on StatusViagem {
-  String get label {
-    switch (this) {
-      case StatusViagem.emAberto:
-        return 'Em Aberto';
-      case StatusViagem.emAndamento:
-        return 'Em Andamento';
-      case StatusViagem.terminada:
-        return 'Terminada';
-      default:
-        return '';
-    }
-  }
-}
-
-// Mock class for Viagem
-class Viagem {
-  final String periodo;
-  final String cidadeOrigem;
-  final String cidadeDestino;
-  final String tempoAcao;
-  final StatusViagem status;
-  bool presencaConfirmada = false;
-
-  Viagem({
-    required this.periodo,
-    required this.cidadeOrigem,
-    required this.cidadeDestino,
-    required this.tempoAcao,
-    required this.status,
-  });
 }

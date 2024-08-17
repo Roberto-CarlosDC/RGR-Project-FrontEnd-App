@@ -1,43 +1,47 @@
+// lib/Views/meu_perfil_page.dart
+
 import 'package:flutter/material.dart';
-import 'theme.dart'; // Importa o tema
-import 'teste.dart'; // Importa o Menu Lateral
+import '../Controllers/AppDrawer.dart';
+import '../Controllers/meu_perfil_controller.dart';
 
 class MeuPerfilPage extends StatelessWidget {
+  final MeuPerfilController _controller = MeuPerfilController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Meu Perfil'),
       ),
-      drawer: AppDrawer(), // Menu Lateral
+      drawer: AppDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(height: 20),
             CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/profile_placeholder.png'), // Substitua pela imagem do perfil
+              backgroundImage: AssetImage(_controller.usuario.imagemPerfil),
             ),
             SizedBox(height: 20),
             ListTile(
               leading: Icon(Icons.person),
               title: Text('Nome do Cliente'),
-              subtitle: Text('João da Silva'),
+              subtitle: Text(_controller.usuario.nome),
             ),
             ListTile(
               leading: Icon(Icons.credit_card),
               title: Text('CPF'),
-              subtitle: Text('123.456.789-00'),
+              subtitle: Text(_controller.usuario.cpf),
             ),
             ListTile(
               leading: Icon(Icons.phone),
               title: Text('Número de Telefone'),
-              subtitle: Text('(49) 99999-9999'),
+              subtitle: Text(_controller.usuario.telefone),
             ),
             ListTile(
               leading: Icon(Icons.location_city),
               title: Text('Cidade Vinculada'),
-              subtitle: Text('Chapecó - SC'),
+              subtitle: Text(_controller.usuario.cidade),
             ),
             ListTile(
               leading: Icon(Icons.lock),
@@ -91,7 +95,8 @@ class MeuPerfilPage extends StatelessWidget {
             ElevatedButton(
               child: Text('Redefinir Senha'),
               onPressed: () {
-                // Adicione a lógica de redefinição de senha aqui
+                // Substitua pelos valores reais dos TextFields
+                _controller.trocarSenha('senhaAtual', 'novaSenha', 'confirmarNovaSenha');
                 Navigator.of(context).pop();
               },
             ),

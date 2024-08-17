@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'theme.dart'; // Importa o tema
-import 'viagens.dart'; // Importa a classe Viagem (que define o card de viagem)
-import 'financeiro.dart'; // Importa a classe Financeiro (que define o card financeiro)
+import 'package:testergr/Models/Viagem_Model.dart';
+import '../Controllers/theme.dart'; // Importa o tema
+import 'Viagem.dart'; // Importa a classe Viagem (que define o card de viagem)
+import 'Financeiro_page.dart'; // Importa a classe Financeiro (que define o card financeiro)
 import 'package:google_maps_flutter/google_maps_flutter.dart'; // Importa o Google Maps
-import 'teste.dart';
+import '../Controllers/AppDrawer.dart';
 
 class HomePage extends StatelessWidget {
   final Viagem proximaViagem = Viagem(
