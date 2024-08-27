@@ -11,49 +11,52 @@ import '../Views/Viagem.dart';
 import '../Views/Local_Atual_Page.dart';
 import '../Views/home.dart';
 import '../Views/Passageiros_Confirmados_Page.dart';
+import '../Views/Login.dart';
+import '../Views/CadUsuario.dart';
+import '../Views/DashBoard.dart';
 
-List<Passageiro> passageirosFicticios = [
-  Passageiro(
-    nome: 'João Silva',
-    passouPeloPonto: false,
-    pontoDeInteresse: PontoDeInteresse(
-      latitude: -23.5505,
-      longitude: -46.6333,
-    ),
-  ),
-  Passageiro(
-    nome: 'Maria Oliveira',
-    passouPeloPonto: true,
-    pontoDeInteresse: PontoDeInteresse(
-      latitude: -22.9068,
-      longitude: -43.1729,
-    ),
-  ),
-  Passageiro(
-    nome: 'Carlos Souza',
-    passouPeloPonto: false,
-    pontoDeInteresse: PontoDeInteresse(
-      latitude: -19.9167,
-      longitude: -43.9345,
-    ),
-  ),
-  Passageiro(
-    nome: 'Ana Lima',
-    passouPeloPonto: true,
-    pontoDeInteresse: PontoDeInteresse(
-      latitude: -15.7801,
-      longitude: -47.9292,
-    ),
-  ),
-  Passageiro(
-    nome: 'Pedro Santos',
-    passouPeloPonto: false,
-    pontoDeInteresse: PontoDeInteresse(
-      latitude: -12.9714,
-      longitude: -38.5014,
-    ),
-  ),
-];
+// List<Passageiro> passageirosFicticios = [
+//   Passageiro(
+//     nome: 'João Silva',
+//     passouPeloPonto: false,
+//     pontoDeInteresse: PontoDeInteresse(
+//       latitude: -23.5505,
+//       longitude: -46.6333,
+//     ),
+//   ),
+//   Passageiro(
+//     nome: 'Maria Oliveira',
+//     passouPeloPonto: true,
+//     pontoDeInteresse: PontoDeInteresse(
+//       latitude: -22.9068,
+//       longitude: -43.1729,
+//     ),
+//   ),
+//   Passageiro(
+//     nome: 'Carlos Souza',
+//     passouPeloPonto: false,
+//     pontoDeInteresse: PontoDeInteresse(
+//       latitude: -19.9167,
+//       longitude: -43.9345,
+//     ),
+//   ),
+//   Passageiro(
+//     nome: 'Ana Lima',
+//     passouPeloPonto: true,
+//     pontoDeInteresse: PontoDeInteresse(
+//       latitude: -15.7801,
+//       longitude: -47.9292,
+//     ),
+//   ),
+//   Passageiro(
+//     nome: 'Pedro Santos',
+//     passouPeloPonto: false,
+//     pontoDeInteresse: PontoDeInteresse(
+//       latitude: -12.9714,
+//       longitude: -38.5014,
+//     ),
+//   ),
+// ];
 
 
 
@@ -148,10 +151,34 @@ class AppDrawer extends StatelessWidget {
           ),
           _buildDrawerItem(
             icon: Icons.settings,
+            text: 'Login',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+            ),
+          ),
+          _buildDrawerItem(
+            icon: Icons.settings,
+            text: 'Cadastro',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => RegisterPage()),
+            ),
+          ),
+          _buildDrawerItem(
+            icon: Icons.settings,
+            text: 'DashBoard',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EmpresaSelectionPage()),
+            ),
+          ),
+          _buildDrawerItem(
+            icon: Icons.list,
             text: 'Lista de Presença',
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => PassageirosConfirmadosPage(passageiros: passageirosFicticios,)),
+              MaterialPageRoute(builder: (context) => PassageirosConfirmadosPage(passageiros: [] ,)),
             ),
           ),
         ],

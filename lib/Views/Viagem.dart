@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../Controllers/viagem_controller.dart';
-import '../Models/Viagem_Model.dart';
+import 'package:testergr/Models/Viagem_Model.dart';
+import 'package:testergr/Views/rotaViagem.dart';
+import '../Controllers/Viagem_Controller.dart';
 import '../Controllers/AppDrawer.dart';
-import 'rotaViagem.dart';
+import '../Models/Viagem_Card.dart';
+
 
 class ViagensPage extends StatefulWidget {
   @override
@@ -26,30 +28,13 @@ class _ViagensPageState extends State<ViagensPage> {
         itemCount: _viagemController.viagens.length,
         itemBuilder: (context, index) {
           final viagem = _viagemController.viagens[index];
-          return GestureDetector(
+          return ViagemCard(
+            viagem: viagem,
             onTap: () {
               setState(() {
                 _viagemController.selectViagem(viagem);
               });
             },
-            child: Card(
-              color: viagem.status == StatusViagem.terminada
-                  ? Colors.grey[300]
-                  : Colors.white,
-              child: ListTile(
-                title: Text('${viagem.periodo} - ${viagem.cidadeOrigem} > ${viagem.cidadeDestino}'),
-                subtitle: Text('${viagem.tempoAcao} | Status: ${viagem.status.label}'),
-                trailing: viagem.status == StatusViagem.terminada
-                    ? Text(
-                        'Terminada',
-                        style: TextStyle(color: Colors.red),
-                      )
-                    : Text(
-                        viagem.status.label,
-                        style: TextStyle(color: viagem.status == StatusViagem.emAndamento ? Colors.orange : Colors.green),
-                      ),
-              ),
-            ),
           );
         },
       ),
@@ -60,6 +45,8 @@ class _ViagensPageState extends State<ViagensPage> {
   }
 
   Widget _buildBottomActionButtons() {
+    final viagem = _viagemController.selectedViagem!;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -67,19 +54,23 @@ class _ViagensPageState extends State<ViagensPage> {
         children: [
           ElevatedButton(
             onPressed: () {
-              _showViagemDetails(_viagemController.selectedViagem!);
+              _showViagemDetails(viagem);
             },
             child: Text('Detalhes'),
           ),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                _viagemController.togglePresencaConfirmada();
-              });
+              if (!viagem.presencaConfirmada) {
+                _showRetornoOptions(context, viagem);
+              } else {
+                setState(() {
+                  _viagemController.togglePresencaConfirmada();
+                });
+              }
             },
-            child: Text(_viagemController.selectedViagem!.presencaConfirmada
-                ? 'Retirar Presença'
-                : 'Confirmar Presença'),
+            child: Text(
+              viagem.presencaConfirmada ? 'Retirar Presença' : 'Confirmar Presença',
+            ),
           ),
         ],
       ),
@@ -126,6 +117,94 @@ class _ViagensPageState extends State<ViagensPage> {
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  void _showRetornoOptions(BuildContext context, Viagem viagem) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Impede fechar ao clicar fora
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text("Selecione a Opção de Retorno"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(
+                    title: Text("Sem Retorno"),
+                    value: "Sem Retorno",
+                    groupValue: viagem.selectedRetornoOption,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        viagem.selectedRetornoOption = value;
+                      });
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: Text("Apenas Retorno"),
+                    value: "Apenas Retorno",
+                    groupValue: viagem.selectedRetornoOption,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        viagem.selectedRetornoOption = value;
+                      });
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: Text("Retorno no Período da Manhã"),
+                    value: "Retorno no Período da Manhã",
+                    groupValue: viagem.selectedRetornoOption,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        viagem.selectedRetornoOption = value;
+                      });
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: Text("Retorno no Período da Tarde"),
+                    value: "Retorno no Período da Tarde",
+                    groupValue: viagem.selectedRetornoOption,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        viagem.selectedRetornoOption = value;
+                      });
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: Text("Retorno no Período da Noite"),
+                    value: "Retorno no Período da Noite",
+                    groupValue: viagem.selectedRetornoOption,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        viagem.selectedRetornoOption = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      viagem.presencaConfirmada = true;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Confirmar'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancelar'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

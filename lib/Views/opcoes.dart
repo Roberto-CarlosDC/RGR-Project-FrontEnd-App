@@ -141,7 +141,7 @@ class _OpcoesPageState extends State<OpcoesPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Text('Aplicativo de Gestão de Transporte Universitário.'),
-              Text('Versão: 1.2.0'),
+              Text('Versão: 1.3.0'),
               Text('Desenvolvido para facilitar o transporte coletivo de estudantes universitários.'),
               Text('Funcionalidades:'),
               Text('- Gerenciamento de rotas.'),

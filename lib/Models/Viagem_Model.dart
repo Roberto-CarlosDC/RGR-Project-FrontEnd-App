@@ -17,13 +17,16 @@ extension StatusViagemExtension on StatusViagem {
   }
 }
 
+// lib/Models/Viagem_Model.dart
+
 class Viagem {
-  final String periodo;
-  final String cidadeOrigem;
-  final String cidadeDestino;
-  final String tempoAcao;
-  final StatusViagem status;
-  bool presencaConfirmada = false;
+  String periodo;
+  String cidadeOrigem;
+  String cidadeDestino;
+  String tempoAcao;
+  StatusViagem status;
+  bool presencaConfirmada;
+  String? selectedRetornoOption; // Novo campo para armazenar a opção de retorno selecionada
 
   Viagem({
     required this.periodo,
@@ -31,5 +34,8 @@ class Viagem {
     required this.cidadeDestino,
     required this.tempoAcao,
     required this.status,
+    this.presencaConfirmada = false,
+    this.selectedRetornoOption,
   });
 }
+

@@ -1,7 +1,6 @@
-// lib/Views/localizacao_atual_page.dart
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../Controllers/Local_Atual_Controller.dart';
+import '../Controllers/Local_Atual_Controller.dart' as local;
 import '../Models/Trip_Model.dart';
 import '../Controllers/AppDrawer.dart';
 
@@ -11,14 +10,20 @@ class LocalizacaoAtualPage extends StatefulWidget {
 }
 
 class _LocalizacaoAtualPageState extends State<LocalizacaoAtualPage> {
-  late TripController _tripController;
+  late local.TripController _tripController;
 
   @override
   void initState() {
     super.initState();
     TripModel tripModel = TripModel(isTripActive: true, isUserConfirmed: true);
-    _tripController = TripController(tripModel: tripModel);
+    _tripController = local.TripController(tripModel: tripModel);
     _tripController.init();
+  }
+
+  @override
+  void dispose() {
+    _tripController.dispose(); // Dispose do controller ao sair da página
+    super.dispose();
   }
 
   @override
@@ -38,7 +43,7 @@ class _LocalizacaoAtualPageState extends State<LocalizacaoAtualPage> {
                       _tripController.mapController = controller;
                     },
                     initialCameraPosition: CameraPosition(
-                      target: LatLng(-15.7942, -47.8822), // Coordenadas iniciais (exemplo)
+                      target: LatLng(-15.7942, -47.8822),
                       zoom: 14,
                     ),
                     markers: _tripController.getVehicleMarker(),
@@ -51,7 +56,8 @@ class _LocalizacaoAtualPageState extends State<LocalizacaoAtualPage> {
                     children: [
                       Text(
                         'Informações da Viagem Ativa:',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
                       Text('Período: 12:00 - 13:00'),

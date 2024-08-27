@@ -1,0 +1,117 @@
+Principais Endpoints e Fluxo de Dados
+
+FUNCIONALIDADE: Autenticação e Gestão de Usuários
+
+Endpoint: /api/auth/login, /api/auth/register, /api/auth/logout
+Campos:
+email: Email do usuário (string)
+password: Senha do usuário (string)
+token: Token de autenticação (string, retornado pela API)
+Resposta:
+Sucesso: Detalhes do usuário, token de autenticação.
+Falha: Mensagem de erro.
+
+
+FUNCIONALIDADE: Detalhes da Conta
+
+Endpoint: /api/user/account
+Campos:
+userId: Identificador único do usuário (string)
+Resposta:
+fullName: Nome completo do usuário (string)
+cpf: CPF do usuário (string)
+phoneNumber: Número de contato do usuário (string)
+accountCreationDate: Data de criação da conta (string)
+birthdate: Data de nascimento do usuário (string)
+
+
+FUNCIONALIDADE: Informações da Empresa
+
+Endpoint: /api/company/details
+Campos:
+companyId: Identificador único da empresa (string)
+Resposta:
+companyName: Nome da empresa (string)
+cnpj: CNPJ da empresa (string)
+city: Cidade onde a empresa opera (string)
+contact: Informações de contato da empresa (string)
+
+
+FUNCIONALIDADE: Gestão de Viagens e Rotas
+
+Endpoint: /api/trips/upcoming, /api/trips/details
+Campos:
+userId: Identificador único do usuário (string)
+status: Status da viagem ("Em Aberto", "Em Andamento", "Terminada") (string)
+Resposta:
+tripId: Identificador único da viagem (string)
+period: Período da viagem (string)
+cidadeOrigem: Cidade de origem (string)
+cidadeDestino: Cidade de destino (string)
+tempoAcao: Duração da viagem (string)
+status: Status atual da viagem (string)
+presencaConfirmada: Booleano indicando se a presença foi confirmada (boolean)
+vehicleType: Tipo de veículo designado (string)
+startTime: Hora de início da viagem (string)
+endTime: Hora de término da viagem (string)
+
+
+FUNCIONALIDADE: Confirmação de Presença
+
+Endpoint: /api/trips/confirmPresence
+Campos:
+tripId: Identificador único da viagem (string)
+userId: Identificador único do usuário (string)
+confirmPresence: Flag booleana indicando se o usuário confirma presença (boolean)
+Resposta:
+Mensagem de sucesso ou erro com base na ação de confirmação.
+
+
+FUNCIONALIDADE: Pontos de Interesse
+
+Endpoint: /api/points/list, /api/points/setDefault
+Campos:
+type: Tipo de ponto ("Embarque", "Desembarque") (string)
+userId: Identificador único do usuário (string)
+pointId: Identificador único do ponto selecionado (string)
+Resposta:
+Lista de pontos, ou confirmação de definição de ponto padrão.
+
+
+FUNCIONALIDADE: Rastreamento de Localização em Tempo Real
+
+Endpoint: /api/location/update
+Campos:
+userId: Identificador único do motorista (string)
+tripId: Identificador único da viagem (string)
+currentLocation: Coordenadas GPS atuais (latitude e longitude) (object)
+Resposta:
+Mensagem de sucesso ou erro com base na atualização de localização.
+
+
+FUNCIONALIDADE: Informações Financeiras
+
+Endpoint: /api/finance/payments
+Campos:
+userId: Identificador único do usuário (string)
+Resposta:
+Lista de registros de pagamento, cada um contendo:
+paymentId: Identificador único do pagamento (string)
+title: Título do pagamento (string)
+dueDate: Data de vencimento do pagamento (string)
+status: Status do pagamento ("Pago", "Pendente") (string)
+amount: Valor do pagamento (string)
+
+
+FUNCIONALIDADE: Calendário Semanal e Feriados
+
+Endpoint: /api/calendar/week
+Campos:
+userId: Identificador único do usuário (string)
+currentWeek: Intervalo de datas da semana atual (object)
+Resposta:
+Lista de dias da semana, cada um contendo:
+date: Data do dia (string)
+isHoliday: Booleano indicando se é feriado (boolean)
+hasTrips: Booleano indicando se há viagens (boolean)
+justification: Justificativa para não haver viagens (se aplicável) (string)

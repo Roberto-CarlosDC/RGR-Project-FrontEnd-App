@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:testergr/Controllers/APIGoogle.dart';
+import 'package:testergr/Services/APIGoogle.dart';
 
 class ViagemDetailsMap extends StatefulWidget {
   final LatLng origem;

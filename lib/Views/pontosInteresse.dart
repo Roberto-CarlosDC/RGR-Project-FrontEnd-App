@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../Controllers/AppDrawer.dart';
+import '../Controllers/pontos_interesse_controller.dart';
+import '../Models/ponto_de_interesse.dart';
 
 class PontosInteressePage extends StatefulWidget {
   @override
@@ -11,39 +13,39 @@ class _PontosInteressePageState extends State<PontosInteressePage> {
   String filtro = 'Embarque';
   Set<Marker> markers = {};
   GoogleMapController? mapController;
-
-  // Exemplo de dados estáticos para os pontos
-  final List<Map<String, dynamic>> pontos = [
-    {"id": 1, "nome": "Ponto 1", "lat": -15.7942, "lng": -47.8822},
-    {"id": 2, "nome": "Ponto 2", "lat": -15.7935, "lng": -47.8818},
-  ];
+  final PontosInteresseController _controller = PontosInteresseController();
 
   @override
   void initState() {
     super.initState();
-    _carregarPontos();
+    _carregarPontos(filtro);
   }
 
-  void _carregarPontos() {
-    setState(() {
-      markers.clear();
-      for (var ponto in pontos) {
-        markers.add(
-          Marker(
-            markerId: MarkerId(ponto['id'].toString()),
-            position: LatLng(ponto['lat'], ponto['lng']),
-            infoWindow: InfoWindow(title: ponto['nome']),
-            onTap: () {
-              // Ação ao tocar no ponto
-              _showPontoSelecionado(ponto['nome']);
-            },
-          ),
-        );
-      }
-    });
+  void _carregarPontos(String filtro) async {
+    try {
+      final pontos = await _controller.buscarPontosDeInteresse(filtro);
+      setState(() {
+        markers.clear();
+        for (var ponto in pontos) {
+          markers.add(
+            Marker(
+              markerId: MarkerId(ponto.id.toString()),
+              position: LatLng(ponto.latitude, ponto.longitude),
+              infoWindow: InfoWindow(title: ponto.nome),
+              onTap: () {
+                _showPontoSelecionado(ponto.id, ponto.nome, filtro);
+              },
+            ),
+          );
+        }
+      });
+    } catch (e) {
+      // Lidar com o erro de conexão à API
+      print('Erro ao carregar pontos: $e');
+    }
   }
 
-  void _showPontoSelecionado(String nomePonto) {
+  void _showPontoSelecionado(int pontoId, String nomePonto, String filtro) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -55,9 +57,18 @@ class _PontosInteressePageState extends State<PontosInteressePage> {
               Text('Ponto Selecionado: $nomePonto'),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  // Implementar lógica para definir como padrão
-                  Navigator.pop(context);
+                onPressed: () async {
+                  try {
+                    await _controller.definirPontoComoPadrao(
+                      usuarioId: 'user123', // Substitua pelo ID real do usuário
+                      tipo: filtro,
+                      pontoId: pontoId,
+                    );
+                    Navigator.pop(context);
+                  } catch (e) {
+                    // Lidar com erro de conexão à API
+                    print('Erro ao definir ponto como padrão: $e');
+                  }
                 },
                 child: Text('DEFINIR COMO PADRÃO'),
               ),
@@ -86,7 +97,7 @@ class _PontosInteressePageState extends State<PontosInteressePage> {
             onChanged: (String? newValue) {
               setState(() {
                 filtro = newValue!;
-                // Implementar lógica de filtro aqui
+                _carregarPontos(filtro); // Recarregar pontos ao mudar o filtro
               });
             },
             items: <String>['Embarque', 'Desembarque']
@@ -109,7 +120,7 @@ class _PontosInteressePageState extends State<PontosInteressePage> {
                 mapController = controller;
               },
               initialCameraPosition: CameraPosition(
-                target: LatLng(-15.7942, -47.8822), // Posição inicial no mapa
+                target: LatLng(-15.7942, -47.8822),
                 zoom: 15,
               ),
               markers: markers,
@@ -122,20 +133,17 @@ class _PontosInteressePageState extends State<PontosInteressePage> {
                 labelText: 'Selecionar Ponto',
                 border: OutlineInputBorder(),
               ),
-              items: pontos.map<DropdownMenuItem<String>>((ponto) {
+              items: markers.map<DropdownMenuItem<String>>((marker) {
                 return DropdownMenuItem<String>(
-                  value: ponto['nome'],
-                  child: Text(ponto['nome']),
+                  value: marker.infoWindow.title,
+                  child: Text(marker.infoWindow.title!),
                 );
               }).toList(),
               onChanged: (String? newValue) {
-                // Implementar lógica para centralizar o mapa no ponto selecionado
-                final pontoSelecionado = pontos
-                    .firstWhere((ponto) => ponto['nome'] == newValue);
+                final markerSelecionado = markers
+                    .firstWhere((marker) => marker.infoWindow.title == newValue);
                 mapController?.animateCamera(
-                  CameraUpdate.newLatLng(
-                    LatLng(pontoSelecionado['lat'], pontoSelecionado['lng']),
-                  ),
+                  CameraUpdate.newLatLng(markerSelecionado.position),
                 );
               },
             ),
